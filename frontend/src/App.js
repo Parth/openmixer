@@ -53,13 +53,13 @@ const styles = theme => ({
 
 class App extends React.Component {
   state = {
-    input: '',
+    input: 0,
     time: 0,
     outputs: [''],
   };
 
-  handleChange = name => event => {
-    this.setState({ [name]: event.target.value });
+  handleInput = event => {
+    this.setState({ input: parseFloat(event.target.value) });
   };
 
   handleOutputChange = index => event => {
@@ -68,7 +68,7 @@ class App extends React.Component {
   }
 
   handleSliderChange = (event, value) => {
-    this.setState({ ['time']: value })
+    this.setState({ time: value })
   }
 
   render() {
@@ -95,10 +95,11 @@ class App extends React.Component {
               <TextField
                 id="standard-name"
                 label="Amount"
+                type="number"
                 className={classes.textField}
-                onChange={this.handleChange('input')}
+                onChange={this.handleInput}
                 margin="normal"
-                helperText="Number of JobCoins you're trying to clean."
+                helperText="Number of JobCoins you're trying to anonymize."
                 InputProps={{
                   endAdornment: <InputAdornment position="end">JC</InputAdornment>,
                 }}
@@ -140,7 +141,7 @@ class App extends React.Component {
                 value={this.state.time}
                 onChange={this.handleSliderChange}>
               </Slider>
-              <p>{this.state.time}s</p> 
+              <p>{this.state.time}s</p>
               <Button variant="contained" color="primary" className={classes.button}
                 onClick={() => {
                   axios.post('/new-tx', this.state)

@@ -1,33 +1,32 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
-	"fmt"
 )
 
-func NewTx(writer http.ResponseWriter, request *http.Request) {
-	if request.Body == nil {
-		http.Error(writer, "No Body", 400)
-		return
-	}
-
-	tx := &Tx{}
-	err := json.NewDecoder(request.Body).Decode(&tx)
-
-	if err != nil {
-		http.Error(writer, err.Error(), 400)
-		return
-	}
-
-	
-	fmt.Println(tx)
-}
-
 func main() {
-	http.Handle("/new-tx", corsHandler(NewTx))
 
+	wallet := &JobcoinAPI{
+		URL: "http://jobcoin.gemini.com/sanitary/api/",
+	}
+
+	statuses := &TxStatus{
+		Statuses: map[string]string{},
+	}
+
+	scheduler := &TxScheduler{
+		Wallet:   wallet,
+		Statuses: statuses,
+	}
+
+	api := &Api{
+		Scheduler: scheduler,
+		Statuses:  statuses,
+		Wallet:    wallet,
+	}
+
+	http.Handle("/new-tx", corsHandler(api.NewTx))
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
 

@@ -1,7 +1,7 @@
 package main
 
 type Tx struct {
-	Input   float64  `json:"input"`
-	Outputs []string `json: "outputs"`
-	Time    float64  `json: "time"`
+	TxId        string  `json:"id"`
+	DepositAddr string  `json: "deposit-addr"`
+	Spec        *TxSpec `json: "spec"`
 }

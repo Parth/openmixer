@@ -31,3 +31,20 @@ func (a *Api) NewTx(writer http.ResponseWriter, request *http.Request) {
 	tx := a.Scheduler.NewTxSpec(spec)
 	json.NewEncoder(writer).Encode(tx)
 }
+
+func (a *Api) TxStatus(writer http.ResponseWriter, request *http.Request) {
+	if request.Body == nil {
+		http.Error(writer, "No Body", 400)
+		return
+	}
+
+	tx := &Tx{}
+	err := json.NewDecoder(request.Body).Decode(&tx)
+
+	if err != nil {
+		http.Error(writer, err.Error(), 400)
+		return
+	}
+
+	json.NewEncoder(writer).Encode(a.Statuses.GetUpdates)
+}

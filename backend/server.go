@@ -5,6 +5,8 @@ import (
 	"net/http"
 )
 
+const mixerAddr = "transparent-mixer"
+
 func main() {
 
 	wallet := &JobcoinAPI{
@@ -12,7 +14,7 @@ func main() {
 	}
 
 	statuses := &TxStatus{
-		Statuses: map[string]string{},
+		Statuses: map[string][]string{},
 	}
 
 	scheduler := &TxScheduler{
@@ -27,6 +29,8 @@ func main() {
 	}
 
 	http.Handle("/new-tx", corsHandler(api.NewTx))
+	http.Handle("/tx-status", corsHandler(api.TxStatus))
+
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
 

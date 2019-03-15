@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -12,7 +13,7 @@ type JobcoinAPI struct {
 }
 
 func (j *JobcoinAPI) CreateAddress() string {
-	return ""
+	return randomString(8)
 }
 
 func (j *JobcoinAPI) CheckBalance(addr string) float64 {
@@ -32,4 +33,17 @@ func (j *JobcoinAPI) CheckBalance(addr string) float64 {
 	return balance
 }
 
-func (j *JobcoinAPI) Send(float64, string, string) {}
+func (j *JobcoinAPI) Send(amount float64, from string, to string) {
+	message := map[string]string{
+		"fromAddress": from,
+		"toAddress":   to,
+		"amount":      strconv.FormatFloat(amount, 'f', 6, 64),
+	}
+
+	jsonValue, _ := json.Marshal(message)
+
+	http.Post(
+		j.URL+"transactions",
+		"application/json",
+		bytes.NewBuffer(jsonValue))
+}

@@ -33,7 +33,21 @@ const styles = theme => ({
     marginRight: theme.spacing.unit,
     marginTop: 0,
     marginBottom: 10,
-    width: '100%',
+    width: '80%',
+  },
+  outputAddr: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    marginTop: 0,
+    marginBottom: 10,
+    width: '80%',
+  },
+  outputSplit: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    marginTop: 0,
+    marginBottom: 10,
+    width: '10%',
   },
   fab: {
     margin: theme.spacing.unit,
@@ -56,6 +70,7 @@ class App extends React.Component {
     input: 0,
     time: 0,
     outputs: [''],
+    splits: [100], // TODO do this better
   };
 
   handleInput = event => {
@@ -67,8 +82,17 @@ class App extends React.Component {
     this.setState({})
   }
 
+  handleSplitChange = index => event => {
+    this.state.splits[index] = event.target.value;
+    this.setState({})
+  }
+
   handleSliderChange = (event, value) => {
-    this.setState({ time: value })
+    this.setState({ time: value });
+  }
+
+  handleTXRecv = (value) => {
+    console.log(value)
   }
 
   render() {
@@ -109,16 +133,32 @@ class App extends React.Component {
               </Typography>
 
               {this.state.outputs.map((value, index) => {
-                return <TextField
-                  className={classes.textField}
-                  id={'' + index}
-                  key={'' + index}
-                  value={this.state.outputs[index]}
-                  onChange={
-                    this.handleOutputChange(index)
-                  }
-                  label="Output Address"
-                />
+                return <div>
+                  <TextField
+                    className={classes.outputAddr}
+                    id={'' + index}
+                    key={'' + index}
+                    value={this.state.outputs[index]}
+                    onChange={
+                      this.handleOutputChange(index)
+                    }
+                    label="Output Address"
+                  />
+                  <TextField
+                    className={classes.outputSplit}
+                    id={'' + index}
+                    key={'' + index}
+                    value={this.state.splits[index]}
+                    type="number"
+                    onChange={
+                      this.handleSplitChange(index)
+                    }
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                    }}
+                    label="Split Percentage"
+                  />
+                </div>
               })}
 
               <Fab
@@ -128,6 +168,12 @@ class App extends React.Component {
                 className={classes.fab}
                 onClick={() => {
                   this.state.outputs.push('')
+                  this.state.splits.push(1)
+
+                  for (var i = 0; i < this.state.splits.length; i++) {
+                    this.state.splits[i] = 100 / this.state.splits.length
+                  }
+
                   this.setState({})
                 }}>
                 <AddIcon />

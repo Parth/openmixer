@@ -49,6 +49,8 @@ func (ts *TxScheduler) newPaymentsWorker(tx *Tx) {
 		amount := balance * (tx.Spec.Splits[index] / 100)
 		ts.Wallet.Send(amount, mixerAddr, outputAddr)
 	}
+
+	ts.Statuses.PushUpdate(tx.TxId, "Mixing Complete")
 }
 
 // TODO move to random utils

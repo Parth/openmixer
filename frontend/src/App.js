@@ -70,7 +70,10 @@ class App extends React.Component {
     input: 0,
     time: 0,
     outputs: [''],
-    splits: [100], // TODO do this better
+    splits: [100],
+    depositAddr: '',
+    txId: '',
+    txstatus: []
   };
 
   handleInput = event => {
@@ -93,6 +96,31 @@ class App extends React.Component {
 
   handleTXRecv = (value) => {
     console.log(value)
+    this.setState({
+      depositAddr: value.data.DepositAddr,
+      txId: value.data.id
+    })
+    this.pollStatus()
+  }
+
+  pollStatus = () => {
+    axios.post('/tx-status', {
+      'id': this.state.txId
+    })
+      .then(this.handleStatus)
+      .catch(function (error) {
+        console.log(error);
+      })
+
+    setTimeout(() => {
+      this.pollStatus()
+    }, 500);
+  }
+
+  handleStatus = (value) => {
+    this.setState({
+      txstatus: value.data
+    })
   }
 
   render() {
@@ -117,7 +145,6 @@ class App extends React.Component {
                 Inputs
               </Typography>
               <TextField
-                id="standard-name"
                 label="Amount"
                 type="number"
                 className={classes.textField}
@@ -202,6 +229,22 @@ class App extends React.Component {
             </form>
           </CardContent>
         </Card>
+        {this.state.depositAddr !== '' &&
+          <Card className={classes.card}>
+            <Typography className={classes.header} variant="h6" component="h6">
+              Deposit 10 JC to {this.state.depositAddr}
+            </Typography>
+          </Card>
+        }
+        {this.state.txId !== '' &&
+          <Card className={classes.card}>
+            {this.state.txstatus.map((value, index) => {
+              return (<Typography className={classes.header} variant="h6" component="h6">
+                {value}
+              </Typography>)
+            })}
+          </Card>
+        }
       </div>
     );
   }

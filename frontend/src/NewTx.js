@@ -1,19 +1,19 @@
-import { CardContent, Fab, TextField } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import Icon from '@material-ui/core/Icon';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Typography from '@material-ui/core/Typography';
-import AddIcon from '@material-ui/icons/Add';
-import Slider from '@material-ui/lab/Slider';
-import axios from 'axios';
-import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { CardContent, Fab, TextField } from '@material-ui/core'
+import Button from '@material-ui/core/Button'
+import Card from '@material-ui/core/Card'
+import Icon from '@material-ui/core/Icon'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import Typography from '@material-ui/core/Typography'
+import AddIcon from '@material-ui/icons/Add'
+import Slider from '@material-ui/lab/Slider'
+import axios from 'axios'
+import React from 'react'
+import { withStyles } from '@material-ui/core/styles'
 
 class NewTx extends React.Component {
   handleInput = event => {
-    this.setState({ input: parseFloat(event.target.value) });
-  };
+    this.setState({ input: parseFloat(event.target.value) })
+  }
 
   handleOutputChange = index => event => {
     let val = event.target.value
@@ -27,7 +27,7 @@ class NewTx extends React.Component {
   }
 
   handleSplitChange = index => event => {
-    let val = event.target.value
+    let val = parseFloat(event.target.value)
 
     let outputs = [...this.state.outputs]
     let output = { ...outputs[index] }
@@ -52,7 +52,7 @@ class NewTx extends React.Component {
   }
 
   handleSliderChange = (event, value) => {
-    this.setState({ time: value });
+    this.setState({ time: value })
   }
 
   state = {
@@ -63,10 +63,10 @@ class NewTx extends React.Component {
       split: 100
     }],
     depositAddr: '',
-  };
+  }
 
   render() {
-    const { classes } = this.props;
+    const { classes } = this.props
     return (
       <Card className={classes.card}>
         <CardContent>
@@ -142,7 +142,7 @@ class NewTx extends React.Component {
                 axios.post('/new-tx', this.state)
                   .then(this.props.onTx)
                   .catch(function (error) {
-                    console.log(error);
+                    console.log(error)
                   })
               }}>
               Send
@@ -151,7 +151,7 @@ class NewTx extends React.Component {
           </form>
         </CardContent>
       </Card>
-    );
+    )
   }
 }
 
@@ -196,6 +196,6 @@ const styles = theme => ({
   rightIcon: {
     marginLeft: theme.spacing.unit,
   },
-});
+})
 
-export default withStyles(styles)(NewTx);
+export default withStyles(styles)(NewTx)

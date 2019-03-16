@@ -1,8 +1,8 @@
-import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
-import React from 'react';
-import NewTx from './NewTx';
-import TxStatus from './TxStatus';
+import { withStyles } from '@material-ui/core/styles'
+import PropTypes from 'prop-types'
+import React from 'react'
+import NewTx from './NewTx'
+import TxStatus from './TxStatus'
 
 
 class App extends React.Component {
@@ -10,12 +10,12 @@ class App extends React.Component {
     depositAddress: '',
     txId: '',
     outputCount: 0,
-  };
+  }
 
   onTx = (value) => {
     console.log(value)
     this.setState({
-      depositAddr: value.data.depositAddress, // TODO what's going on here with the casing? 
+      depositAddr: value.data.depositAddress,
       txId: value.data.id,
       outputCount: value.data.spec.outputs.length
     })
@@ -30,7 +30,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes } = this.props
 
     return (
       <div className={classes.root}>
@@ -40,13 +40,13 @@ class App extends React.Component {
           <TxStatus txId={this.state.txId} depositAddr={this.state.depositAddr} outputCount={this.state.outputCount}/>
         }
       </div>
-    );
+    )
   }
 }
 
 App.propTypes = {
   classes: PropTypes.object.isRequired,
-};
+}
 
 const styles = theme => ({
   card: {
@@ -57,6 +57,6 @@ const styles = theme => ({
   root: {
     flexGrow: 1,
   },
-});
+})
 
-export default withStyles(styles)(App);
+export default withStyles(styles)(App)

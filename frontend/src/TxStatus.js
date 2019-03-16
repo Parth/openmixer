@@ -1,9 +1,9 @@
-import { StepLabel, Stepper, Step, StepContent } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
-import axios from 'axios';
-import React from 'react';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/Card';
+import { StepLabel, Stepper, Step, StepContent } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
+import axios from 'axios'
+import React from 'react'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/Card'
 
 class TxStatus extends React.Component {
   state = {
@@ -21,12 +21,12 @@ class TxStatus extends React.Component {
       })
       .then(this.handleStatus)
       .catch(function (error) {
-        console.log(error);
+        console.log(error)
       })
 
     setTimeout(() => {
       this.pollStatus()
-    }, 500);
+    }, 500)
   }
 
   handleStatus = (value) => {
@@ -36,7 +36,7 @@ class TxStatus extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes } = this.props
     return (
       <Card className={classes.card}>
         <CardContent>
@@ -66,6 +66,6 @@ const styles = theme => ({
   root: {
     flexGrow: 1,
   },
-});
+})
 
 export default withStyles(styles)(TxStatus)

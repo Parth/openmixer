@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"net/http"
 	"fmt"
+	"net/http"
 )
 
 type Api struct {
@@ -23,6 +23,7 @@ func (a *Api) NewTx(writer http.ResponseWriter, request *http.Request) {
 
 	spec := &TxSpec{}
 	err := json.NewDecoder(request.Body).Decode(&spec)
+	fmt.Println(spec)
 
 	if err != nil {
 		http.Error(writer, err.Error(), 400)
@@ -30,6 +31,7 @@ func (a *Api) NewTx(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	tx := a.Scheduler.NewTxSpec(spec)
+
 	fmt.Println(tx)
 	json.NewEncoder(writer).Encode(tx)
 }
@@ -48,5 +50,5 @@ func (a *Api) TxStatus(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	json.NewEncoder(writer).Encode(a.Statuses.GetUpdates(txidMap["id"]))
+	json.NewEncoder(writer).Encode(a.Statuses.GetStatus(txidMap["id"]))
 }

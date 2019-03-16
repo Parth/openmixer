@@ -2,7 +2,6 @@ package main
 
 import (
 	"math/rand"
-	"strconv"
 	"time"
 )
 
@@ -19,7 +18,7 @@ func (ts *TxScheduler) NewTxSpec(spec *TxSpec) *Tx {
 	id := randomString(10)
 	wallet := ts.Wallet.CreateAddress()
 
-	ts.Statuses.PushUpdate(id, "TX queued")
+	ts.Statuses.NewTx(id, len(spec.Outputs))
 	tx := &Tx{
 		DepositAddr: wallet,
 		TxId:        id,
@@ -37,20 +36,20 @@ func (ts *TxScheduler) newPaymentsWorker(tx *Tx) {
 	}
 
 	balance := ts.Wallet.CheckBalance(tx.DepositAddr)
-	ts.Statuses.PushUpdate(tx.TxId, "Deposit detected")
+	ts.Statuses.Increment(tx.TxId)
 
 	ts.Wallet.Send(balance, tx.DepositAddr, mixerAddr)
 
 	sleepIntervals := nRandNumsThatSumToM(len(tx.Spec.Outputs), tx.Spec.Time)
 
-	for index, outputAddr := range tx.Spec.Outputs {
-		ts.Statuses.PushUpdate(tx.TxId, "Payment #"+strconv.Itoa(index)+" scheduled")
+	for index, output := range tx.Spec.Outputs {
+		ts.Statuses.Increment(tx.TxId)
 		time.Sleep(time.Duration(1000*sleepIntervals[index]) * time.Millisecond)
-		amount := balance * (tx.Spec.Splits[index] / 100)
-		ts.Wallet.Send(amount, mixerAddr, outputAddr)
+		amount := balance * (tx.Spec.Outputs[index].Split / 100)
+		ts.Wallet.Send(amount, mixerAddr, output.Address)
 	}
 
-	ts.Statuses.PushUpdate(tx.TxId, "Mixing Complete")
+	ts.Statuses.Increment(tx.TxId)
 }
 
 // TODO move to random utils

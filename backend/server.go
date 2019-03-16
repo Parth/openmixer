@@ -14,7 +14,7 @@ func main() {
 	}
 
 	statuses := &TxStatus{
-		Statuses: map[string][]string{},
+		Statuses: map[string]*Status{},
 	}
 
 	scheduler := &TxScheduler{

@@ -31,10 +31,11 @@ func (mw *MockWallet) CheckBalance(addr string) float64 {
 }
 
 type MockStatus struct {
-	ITxStatus
 }
 
-func (ms *MockStatus) PushUpdate(string, string) {}
+func (ms *MockStatus) NewTx(string, int)        {}
+func (ms *MockStatus) Increment(string) error   { return nil }
+func (ms *MockStatus) GetStatus(string) *Status { return nil }
 
 func (mw *MockWallet) Send(amount float64, from string, to string) {
 	mw.transactions[from] += (-1 * amount)
@@ -56,11 +57,19 @@ func TestNewTxSpec(t *testing.T) {
 	scheduler.NewTxSpec(&TxSpec{
 		Input: 8,
 		Time:  3,
-		Outputs: []string{
-			"test1", "test2", "test3",
-		},
-		Splits: []float64{
-			30, 30, 40,
+		Outputs: []Output{
+			Output{
+				Address: "test1",
+				Split:   30,
+			},
+			Output{
+				Address: "test2",
+				Split:   30,
+			},
+			Output{
+				Address: "test3",
+				Split:   40,
+			},
 		},
 	})
 

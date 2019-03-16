@@ -40,10 +40,16 @@ func (j *JobcoinAPI) Send(amount float64, from string, to string) {
 		"amount":      strconv.FormatFloat(amount, 'f', 6, 64),
 	}
 
-	jsonValue, _ := json.Marshal(message)
+	fmt.Println(message)
 
-	http.Post(
+	jsonValue, err := json.Marshal(message)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(http.Post(
 		j.URL+"transactions",
 		"application/json",
-		bytes.NewBuffer(jsonValue))
+		bytes.NewBuffer(jsonValue)))
 }

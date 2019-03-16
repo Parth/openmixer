@@ -6,14 +6,30 @@ import (
 
 func TestTxStatus(t *testing.T) {
 	s := &TxStatus{
-		Statuses: map[string][]string{},
+		Statuses: map[string]*Status{},
 	}
 
-	s.PushUpdate("wallet1", "a")
-	s.PushUpdate("wallet1", "b")
+	if s.GetStatus("test") != nil {
+		t.Errorf("key not found should be nil should be nil")
+	}
 
-	a := s.GetUpdates("wallet1")
-	if a[0] != "a" || a[1] != "b" {
-		t.Fail()
+	err := s.Increment("test")
+	if err == nil {
+		t.Errorf("should throw error if trying to incrememnt not-known-key")
+	}
+
+	s.NewTx("test", 3)
+
+	if s.GetStatus("test").Current != -1 {
+		t.Errorf("Should start with -1")
+	}
+
+	s.Increment("test")
+	if s.GetStatus("test").Current != 0 {
+		t.Errorf("Increment should work")
+	}
+
+	if s.GetStatus("test").Total != 3 {
+		t.Errorf("was passed 3 as total")
 	}
 }

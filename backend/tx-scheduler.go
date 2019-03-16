@@ -5,15 +5,22 @@ import (
 	"time"
 )
 
+// TxScheduler implements the ITxScheduler interface. Requires an ITxStatus
+// to push payment updates too, and a IWallet to generate addresses and
+// execute transactions
 type TxScheduler struct {
 	Statuses ITxStatus
 	Wallet   IWallet
 }
 
+// ITxScheduler Given a TxSpec, schedule it, return a Tx to check the status
+// Of that payment
 type ITxScheduler interface {
 	NewTxSpec(tx *TxSpec) *Tx
 }
 
+// NewTxSpec takes a TxSpec, creates a goroutine for the scheduling of the
+// transactions, returns a Tx Object
 func (ts *TxScheduler) NewTxSpec(spec *TxSpec) *Tx {
 	id := randomString(10)
 	wallet := ts.Wallet.CreateAddress()
@@ -21,7 +28,7 @@ func (ts *TxScheduler) NewTxSpec(spec *TxSpec) *Tx {
 	ts.Statuses.NewTx(id, len(spec.Outputs))
 	tx := &Tx{
 		DepositAddr: wallet,
-		TxId:        id,
+		TxID:        id,
 		Spec:        spec,
 	}
 
@@ -36,20 +43,20 @@ func (ts *TxScheduler) newPaymentsWorker(tx *Tx) {
 	}
 
 	balance := ts.Wallet.CheckBalance(tx.DepositAddr)
-	ts.Statuses.Increment(tx.TxId)
+	ts.Statuses.Increment(tx.TxID)
 
 	ts.Wallet.Send(balance, tx.DepositAddr, mixerAddr)
 
 	sleepIntervals := nRandNumsThatSumToM(len(tx.Spec.Outputs), tx.Spec.Time)
 
 	for index, output := range tx.Spec.Outputs {
-		ts.Statuses.Increment(tx.TxId)
+		ts.Statuses.Increment(tx.TxID)
 		time.Sleep(time.Duration(1000*sleepIntervals[index]) * time.Millisecond)
 		amount := balance * (tx.Spec.Outputs[index].Split / 100)
 		ts.Wallet.Send(amount, mixerAddr, output.Address)
 	}
 
-	ts.Statuses.Increment(tx.TxId)
+	ts.Statuses.Increment(tx.TxID)
 }
 
 // TODO move to random utils

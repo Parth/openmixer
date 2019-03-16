@@ -6,7 +6,8 @@ import (
 	"net/http"
 )
 
-type Api struct {
+// API is what infrastructure layer components will call to interact with our business logic
+type API struct {
 	Scheduler ITxScheduler
 	Statuses  ITxStatus
 	Wallet    IWallet
@@ -15,7 +16,7 @@ type Api struct {
 // NewTx parses http requests, validates them, and gives the transaction described
 // to the transaction scheduler. The transaction scheduler returns a txid which a
 // client can use to keep track of the status of the transaction
-func (a *Api) NewTx(writer http.ResponseWriter, request *http.Request) {
+func (a *API) NewTx(writer http.ResponseWriter, request *http.Request) {
 	if request.Body == nil {
 		http.Error(writer, "No Body", 400)
 		return
@@ -36,7 +37,9 @@ func (a *Api) NewTx(writer http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(writer).Encode(tx)
 }
 
-func (a *Api) TxStatus(writer http.ResponseWriter, request *http.Request) {
+// TxStatus parses http requests, validates them, and looks up the status of the
+// transaction in question returns a Status object
+func (a *API) TxStatus(writer http.ResponseWriter, request *http.Request) {
 	if request.Body == nil {
 		http.Error(writer, "No Body", 400)
 		return

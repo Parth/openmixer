@@ -5,12 +5,16 @@ import (
 	"net/http"
 )
 
+// This mixer's address
 const mixerAddr = "transparent-mixer"
+
+// URL for our "node"
+const walletURL = "http://jobcoin.gemini.com/sanitary/api/"
 
 func main() {
 
 	wallet := &JobcoinAPI{
-		URL: "http://jobcoin.gemini.com/sanitary/api/",
+		URL: walletURL,
 	}
 
 	statuses := &TxStatus{
@@ -22,7 +26,7 @@ func main() {
 		Statuses: statuses,
 	}
 
-	api := &Api{
+	api := &API{
 		Scheduler: scheduler,
 		Statuses:  statuses,
 		Wallet:    wallet,

@@ -1,12 +1,24 @@
 package main
 
+// TxSpec describes a new transaction on this platform
 type TxSpec struct {
-	Input   float64  `json:"input"`
+	// Deposit amount that triggers the transactions
+	Input float64 `json:"input"`
+
+	// Where will the money & how much
 	Outputs []Output `json:"outputs"`
-	Time    float64  `json:"time"`
+
+	// By when should the last payment be received
+	Time float64 `json:"time"`
 }
 
+// Output describes where the money will be sent
+// and what percentage of the total transaction this
+// output is
 type Output struct {
-	Address string  `json:"addr"`
-	Split   float64 `json:"split"`
+	// Destination
+	Address string `json:"addr"`
+
+	// [0-100]% of the balance post Input detection
+	Split float64 `json:"split"`
 }

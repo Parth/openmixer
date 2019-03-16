@@ -8,14 +8,18 @@ import (
 	"strconv"
 )
 
+// JobcoinAPI is an implementation of the Wallet interface
 type JobcoinAPI struct {
 	URL string
 }
 
+// CreateAddress generates a new Jobcoin wallet, used as a unique
+// deposit location for every customer
 func (j *JobcoinAPI) CreateAddress() string {
 	return randomString(8)
 }
 
+// CheckBalance returns the balance for a given Jobcoin address
 func (j *JobcoinAPI) CheckBalance(addr string) float64 {
 	resp, err := http.Get(j.URL + "addresses/" + addr)
 	if err != nil {
@@ -33,6 +37,7 @@ func (j *JobcoinAPI) CheckBalance(addr string) float64 {
 	return balance
 }
 
+// Send creates and executes a transaction
 func (j *JobcoinAPI) Send(amount float64, from string, to string) {
 	message := map[string]string{
 		"fromAddress": from,

@@ -53,8 +53,30 @@ They communicate via `props` and callbacks for the time being, as this app grows
 
 The backend is implemented in golang, it roughly follows a dependency injection design pattern. No framework is used for this as the dependency graph is simple. The dependencies are setup in [server.go](https://github.com/Parth/open-mixer/blob/master/backend/server.go#L29). Dependency injection made it particularly easy for me to test various functionality without having to interact with the Jobcoin API, allowed me to test components independently by passing around mocked versions of `Status` or `Wallet`, and will allow me to point this service to a bitcoin node with relative ease.
 
+Roughly speaking:
+
+`server.go` sets up the dependencies and all the infra level stuff (ports, env variables, all this would be handled within server.go). `api.go` handles the implementation of the endpoints we're exposing. 
+
+The dependency tree:
+
+```
+Wallet() // Depends on nothing
+Status() 
+Scheduler(Wallet, Status) // The scheduler depends on wallet & status
+API(Scheduler, Status)
+```
+
+The way the go network library is written, every api request creates a new goroutine. The only sensitive state that needs to be protected is the status of each transaction (for example many requests may create new tx objects each with their own statuses). The status logic is very simple `map` logic protected by concurrency locks: [tx-status.go](https://github.com/Parth/open-mixer/blob/master/backend/tx-status.go#L17).
+
 # Areas of improvement:
 
 * Currently our backend implementation is stateful and not terribly fault tolerant. When a payment is "scheduled" the details (state) of that payment live within a goroutine. If we were to replicate the backend, replica1 wouldn't be able to access status information for payments that were scheduled from replica2. If we sufer a server failure, that state is lost for ever, and not all of our client's outputs will be paid out. In this situation perhaps that money could be reallocated to hiring developers to make the mixer stateless. 
 * We rely on polling in two places: the frontend polls the backend for updates regarding payment scheduling. The backend polls the "wallet" for updates regarding deposit addresses. Ideally we'd leverage a more event driven communication flow as we began to experience scale between the frontend and backend. Good technology candidates for this might be websockets or server send events (though some attention would need to be given to ensuring that the solution remain stateless). Polling between the backend and "wallet" can be solved (in the case of bitcoin) by pointing our backend to a [node that supports events](https://bcoin.io/guides/events.html).
 * Currently a user can specify the "spread-out-ness" of their transactions temporally. It would be nice for a user to also be able to specify a minimum amount of time their transaction has to sit in the mixer, and then spread out the output payments.
+
+# Timesheet:
+
+* Monday: I was off from work so I spent ~6 hours on modnay
+* Tuesday-Thursday: ~2 hours each day after work
+* Friday: 4 hours after work
+* Saturday: ~6 hours

@@ -35,7 +35,7 @@ The implementation has 2 components: a client (react based frontend) and a serve
 
 ### Frontend
 
-The frontend is essentially setup like this:
+The frontend is made up of 3 react components `App`, `NewTx`, and `TxStatus` which are logically laid out like this:
 ```
 <App>
 	<NewTx txDone={callback} />
@@ -46,6 +46,12 @@ The frontend is essentially setup like this:
 	}
 </App>
 ```
+
+They communicate via `props` and callbacks for the time being, as this app grows in complexity perhaps we'd want to look into redux or the new context api. I'd need to learn more about these things.
+
+### Backend
+
+The backend is implemented in golang, it roughly follows a dependency injection design pattern. No framework is used for this as the dependency graph is simple. The dependencies are setup in [server.go](https://github.com/Parth/open-mixer/blob/master/backend/server.go#L29). Dependency injection made it particularly easy for me to test various functionality without having to interact with the Jobcoin API, allowed me to test components independently by passing around mocked versions of `Status` or `Wallet`, and will allow me to point this service to a bitcoin node with relative ease.
 
 # Areas of improvement:
 

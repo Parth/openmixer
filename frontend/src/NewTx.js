@@ -114,7 +114,7 @@ class NewTx extends React.Component {
                   InputProps={{
                     endAdornment: <InputAdornment position="end">%</InputAdornment>,
                   }}
-                  label="Split Percentage"
+                  label="Split"
                 />
               </div>
             })}
